@@ -1,4 +1,4 @@
-const CACHE_NAME = 'iqchat-v7';
+const CACHE_NAME = 'iqchat-v8';
 const ASSETS = [
   './',
   './index.html',

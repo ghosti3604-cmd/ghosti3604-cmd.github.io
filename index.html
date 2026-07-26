@@ -18,7 +18,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="css/styles.css">
 </head>
-<body class="dark-theme">
+<body class="dark-theme" oncontextmenu="return false;">
 
   <div class="app-viewport">
     
@@ -382,6 +382,14 @@
     <div class="lightbox-modal" id="lightboxModal" style="display: none; opacity: 0;">
       <button class="lightbox-close-btn" id="closeLightboxBtn"><i class="fa-solid fa-xmark"></i></button>
       <img id="lightboxImage" src="" alt="الصورة المكبرة">
+      <div class="lightbox-actions" id="lightboxActions">
+        <button class="lightbox-action-btn" id="downloadImageBtn">
+          <i class="fa-solid fa-download"></i> تنزيل
+        </button>
+        <button class="lightbox-action-btn danger" id="deleteImageBtn">
+          <i class="fa-solid fa-trash"></i> حذف
+        </button>
+      </div>
     </div>
 
   </div>
