@@ -393,11 +393,8 @@
           const newWorker = reg.installing;
           newWorker.addEventListener('statechange', () => {
             if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-              const toast = document.getElementById('updateToast');
-              toast.classList.add('show');
-              toast.addEventListener('click', () => {
-                newWorker.postMessage({ type: 'SKIP_WAITING' });
-              });
+              // Automatically activate the new service worker without asking
+              newWorker.postMessage({ type: 'SKIP_WAITING' });
             }
           });
         });
@@ -412,12 +409,6 @@
       });
     }
   </script>
-
-  <!-- Update Toast -->
-  <div class="update-toast" id="updateToast">
-    <i class="fa-solid fa-cloud-arrow-down"></i>
-    <span>تحديث جديد متاح! انقر للتحديث.</span>
-  </div>
 
   <!-- Scripts -->
   <script type="module" src="js/firebase-config.js"></script>
