@@ -1,4 +1,4 @@
-const CACHE_NAME = 'iqchat-v4';
+const CACHE_NAME = 'iqchat-v5';
 const ASSETS = [
   './',
   './index.html',
@@ -41,4 +41,10 @@ self.addEventListener('fetch', (e) => {
   e.respondWith(
     caches.match(e.request).then((res) => res || fetch(e.request))
   );
+});
+
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
 });

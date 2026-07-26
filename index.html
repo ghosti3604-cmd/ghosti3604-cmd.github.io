@@ -177,7 +177,12 @@
 
         <!-- Users List -->
         <div class="users-list-container">
-          <div class="section-subtitle">الحسابات</div>
+          <div class="section-header-row">
+            <div class="section-subtitle">الحسابات</div>
+            <button type="button" class="refresh-btn" id="refreshUsersBtn" title="تحديث الحسابات">
+              <i class="fa-solid fa-arrows-rotate"></i>
+            </button>
+          </div>
           <div class="users-list" id="usersList"></div>
         </div>
       </section>
@@ -198,10 +203,18 @@
               <p id="chatTargetSubtext">متصل الآن</p>
             </div>
           </div>
-          <div class="chat-actions">
+          <div class="chat-actions" style="position: relative;">
             <button class="icon-btn" title="المزيد" id="chatMenuBtn">
               <i class="fa-solid fa-ellipsis-vertical"></i>
             </button>
+            <div class="chat-dropdown" id="chatDropdownMenu">
+              <button class="chat-dropdown-item danger" id="deleteChatBtn">
+                <i class="fa-solid fa-trash"></i> مسح المحادثة
+              </button>
+              <button class="chat-dropdown-item danger" id="blockUserBtn">
+                <i class="fa-solid fa-ban"></i> حظر المستخدم
+              </button>
+            </div>
           </div>
         </div>
 
@@ -375,9 +388,38 @@
 
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('./sw.js').catch(err => console.warn('SW registration:', err));
+      navigator.serviceWorker.register('./sw.js').then(reg => {
+        reg.addEventListener('updatefound', () => {
+          const newWorker = reg.installing;
+          newWorker.addEventListener('statechange', () => {
+            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              const toast = document.getElementById('updateToast');
+              toast.classList.add('show');
+              toast.addEventListener('click', () => {
+                newWorker.postMessage({ type: 'SKIP_WAITING' });
+              });
+            }
+          });
+        });
+      }).catch(err => console.warn('SW registration:', err));
+
+      let refreshing = false;
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (!refreshing) {
+          window.location.reload();
+          refreshing = true;
+        }
+      });
     }
   </script>
+
+  <!-- Update Toast -->
+  <div class="update-toast" id="updateToast">
+    <i class="fa-solid fa-cloud-arrow-down"></i>
+    <span>تحديث جديد متاح! انقر للتحديث.</span>
+  </div>
+
+  <!-- Scripts -->
   <script type="module" src="js/firebase-config.js"></script>
   <script type="module" src="js/auth.js"></script>
   <script type="module" src="js/presence.js"></script>
