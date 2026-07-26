@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>IQChat - تطبيق الدردشة المباشرة</title>
+  <meta name="description" content="تطبيق دردشة موبايل احترافي IQChat مع ميزة القصص اليومية والدردشة المباشرة.">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#7C3AED">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="IQChat">
+  <link rel="apple-touch-icon" href="https://api.dicebear.com/7.x/identicon/png?seed=IQChatLogo&size=192">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="dark-theme">
+
+  <div class="app-viewport">
+    
+    <!-- HEADER BAR -->
+    <header class="app-header" id="appHeader">
+      <div class="header-content">
+        <div class="brand-group">
+          <div class="logo-icon">
+            <i class="fa-solid fa-comments"></i>
+            <span class="logo-pulse"></span>
+          </div>
+          <h1 class="brand-title">IQ<span>Chat</span></h1>
+        </div>
+
+        <div class="header-actions">
+          <div class="user-header-profile" id="userHeaderProfile" style="display: none;">
+            <div class="avatar-wrapper sm">
+              <img id="headerAvatar" src="https://api.dicebear.com/7.x/avataaars/svg?seed=IQUser" alt="الصورة الشخصية">
+              <span class="status-indicator online"></span>
+            </div>
+            <button class="icon-btn" id="openSettingsBtn" title="الإعدادات">
+              <i class="fa-solid fa-gear"></i>
+            </button>
+            <button class="icon-btn logout-btn" id="logoutBtn" title="تسجيل الخروج">
+              <i class="fa-solid fa-right-from-bracket"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- MAIN APP SCREEN WRAPPER -->
+    <main class="app-body">
+
+      <!-- 1. AUTH SCREEN -->
+      <section class="screen auth-screen active" id="authScreen">
+        <div class="auth-card glass-panel">
+          <div class="auth-header">
+            <div class="auth-logo">
+              <i class="fa-solid fa-comments"></i>
+            </div>
+            <h2>تطبيق IQChat</h2>
+            <p>سجل دخولك أو أنشئ حساباً جديداً</p>
+          </div>
+
+          <div class="auth-tabs">
+            <button class="tab-btn active" id="tabLoginBtn">تسجيل الدخول</button>
+            <button class="tab-btn" id="tabRegisterBtn">إنشاء حساب جديد</button>
+          </div>
+
+          <div class="auth-alert" id="authAlert" style="display: none;"></div>
+
+          <!-- LOGIN FORM -->
+          <form id="loginForm" class="auth-form active">
+            <div class="input-group">
+              <label for="loginEmail"><i class="fa-regular fa-envelope"></i> البريد الإلكتروني</label>
+              <input type="email" id="loginEmail" placeholder="name@example.com" required autocomplete="email">
+            </div>
+            <div class="input-group">
+              <label for="loginPassword"><i class="fa-solid fa-lock"></i> كلمة السر</label>
+              <div class="password-wrapper">
+                <input type="password" id="loginPassword" placeholder="••••••••" required autocomplete="current-password">
+                <button type="button" class="toggle-password" data-target="loginPassword">
+                  <i class="fa-regular fa-eye"></i>
+                </button>
+              </div>
+            </div>
+            <button type="submit" class="btn primary-btn btn-block" id="loginSubmitBtn">
+              <span>تسجيل الدخول</span>
+              <i class="fa-solid fa-arrow-left"></i>
+            </button>
+          </form>
+
+          <!-- REGISTER FORM -->
+          <form id="registerForm" class="auth-form">
+            <div class="avatar-picker-group">
+              <label>اختر صورتك الشخصية</label>
+              <div class="avatar-options" id="avatarPicker">
+                <div class="avatar-opt selected" data-avatar="https://api.dicebear.com/7.x/avataaars/svg?seed=IQUser1">
+                  <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=IQUser1" alt="Avatar 1">
+                </div>
+                <div class="avatar-opt" data-avatar="https://api.dicebear.com/7.x/avataaars/svg?seed=IQUser2">
+                  <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=IQUser2" alt="Avatar 2">
+                </div>
+                <div class="avatar-opt" data-avatar="https://api.dicebear.com/7.x/avataaars/svg?seed=IQUser3">
+                  <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=IQUser3" alt="Avatar 3">
+                </div>
+                <div class="avatar-opt" data-avatar="https://api.dicebear.com/7.x/avataaars/svg?seed=IQUser4">
+                  <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=IQUser4" alt="Avatar 4">
+                </div>
+                <div class="avatar-upload-btn" id="customAvatarBtn" title="رفع صورة مخصصة">
+                  <i class="fa-solid fa-camera"></i>
+                  <input type="file" id="customAvatarInput" accept="image/*" style="display: none;">
+                </div>
+              </div>
+            </div>
+            <div class="input-group">
+              <label for="regName"><i class="fa-regular fa-user"></i> اسم المستخدم</label>
+              <input type="text" id="regName" placeholder="أحمد العراقي" required>
+            </div>
+            <div class="input-group">
+              <label for="regEmail"><i class="fa-regular fa-envelope"></i> البريد الإلكتروني</label>
+              <input type="email" id="regEmail" placeholder="name@example.com" required autocomplete="email">
+            </div>
+            <div class="input-group">
+              <label for="regPassword"><i class="fa-solid fa-lock"></i> كلمة السر</label>
+              <div class="password-wrapper">
+                <input type="password" id="regPassword" placeholder="6 أحرف أو أكثر" minlength="6" required autocomplete="new-password">
+                <button type="button" class="toggle-password" data-target="regPassword">
+                  <i class="fa-regular fa-eye"></i>
+                </button>
+              </div>
+            </div>
+            <button type="submit" class="btn primary-btn btn-block" id="registerSubmitBtn">
+              <span>إنشاء حساب جديد</span>
+              <i class="fa-solid fa-user-plus"></i>
+            </button>
+          </form>
+        </div>
+      </section>
+
+      <!-- 2. USERS & STORIES SCREEN -->
+      <section class="screen users-screen" id="usersScreen">
+        <!-- Stories Bar -->
+        <div class="stories-bar">
+          <div class="section-subtitle">القصص اليومية</div>
+          <div class="stories-scroll" id="storiesScroll">
+            <div class="story-add-btn" id="addStoryBtn">
+              <div class="story-circle add-circle">
+                <i class="fa-solid fa-plus"></i>
+              </div>
+              <span>قصتي</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Search and Filter -->
+        <div class="users-header-bar">
+          <div class="search-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="searchUsersInput" placeholder="البحث عن حساب...">
+          </div>
+          <div class="filter-pills">
+            <button class="pill-btn active" data-filter="all">الكل (<span id="totalUsersCount">0</span>)</button>
+            <button class="pill-btn" data-filter="online">
+              <span class="dot-online-inline"></span> متصل (<span id="onlineUsersCount">0</span>)
+            </button>
+          </div>
+        </div>
+
+        <!-- Online Users Horizontal -->
+        <div class="active-users-bar">
+          <div class="section-subtitle">المتصلون الآن</div>
+          <div class="horizontal-users-scroll" id="onlineHorizontalList"></div>
+        </div>
+
+        <!-- Users List -->
+        <div class="users-list-container">
+          <div class="section-subtitle">الحسابات</div>
+          <div class="users-list" id="usersList"></div>
+        </div>
+      </section>
+
+      <!-- 3. CHAT SCREEN -->
+      <section class="screen chat-screen" id="chatScreen">
+        <div class="chat-header">
+          <button class="back-btn" id="closeChatBtn" title="الرجوع">
+            <i class="fa-solid fa-chevron-right"></i>
+          </button>
+          <div class="chat-user-info" id="chatUserInfoBtn">
+            <div class="avatar-wrapper">
+              <img id="chatTargetAvatar" src="" alt="المستخدم">
+              <span class="status-indicator" id="chatTargetStatus"></span>
+            </div>
+            <div class="user-meta">
+              <h3 id="chatTargetName">اسم المستخدم</h3>
+              <p id="chatTargetSubtext">متصل الآن</p>
+            </div>
+          </div>
+          <div class="chat-actions">
+            <button class="icon-btn" title="المزيد" id="chatMenuBtn">
+              <i class="fa-solid fa-ellipsis-vertical"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="messages-container" id="messagesContainer">
+          <div class="empty-chat-notice" id="emptyChatNotice">
+            <div class="notice-icon"><i class="fa-regular fa-paper-plane"></i></div>
+            <p>لا توجد رسائل سابقة. ابدأ المحادثة الآن!</p>
+          </div>
+        </div>
+
+        <div class="image-preview-overlay" id="imagePreviewOverlay" style="display: none;">
+          <div class="preview-card">
+            <img id="previewImageElement" src="" alt="معاينة الصورة">
+            <div class="preview-actions">
+              <button type="button" class="btn danger-btn" id="cancelImagePreviewBtn">
+                <i class="fa-solid fa-trash"></i> إلغاء
+              </button>
+              <button type="button" class="btn primary-btn" id="sendImagePreviewBtn">
+                <i class="fa-solid fa-paper-plane"></i> إرسال الصورة
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <form class="chat-input-bar" id="chatForm">
+          <input type="file" id="imageFileInput" accept="image/*" style="display: none;">
+          <button type="button" class="input-action-btn" id="attachImageBtn" title="إرفاق صورة">
+            <i class="fa-regular fa-image"></i>
+          </button>
+          <div class="chat-input-wrapper">
+            <textarea id="messageTextInput" placeholder="اكتب رسالتك هنا..." rows="1"></textarea>
+          </div>
+          <button type="submit" class="send-message-btn" id="sendMessageBtn" title="إرسال">
+            <i class="fa-solid fa-paper-plane"></i>
+          </button>
+        </form>
+      </section>
+
+      <!-- 4. SETTINGS SCREEN -->
+      <section class="screen settings-screen" id="settingsScreen">
+        <div class="settings-top-bar">
+          <button class="back-btn" id="closeSettingsBtn"><i class="fa-solid fa-chevron-right"></i></button>
+          <h2>الإعدادات</h2>
+        </div>
+
+        <div class="settings-content">
+          <!-- Profile Card -->
+          <div class="settings-profile-card glass-panel">
+            <div class="settings-avatar-wrapper" id="settingsAvatarWrapper">
+              <img id="settingsAvatar" src="" alt="الصورة الشخصية">
+              <div class="settings-avatar-edit"><i class="fa-solid fa-camera"></i></div>
+              <input type="file" id="settingsAvatarInput" accept="image/*" style="display:none;">
+            </div>
+            <h3 id="settingsUserName">اسم المستخدم</h3>
+            <p id="settingsUserEmail">email@example.com</p>
+          </div>
+
+          <!-- Theme Toggle -->
+          <div class="settings-section glass-panel">
+            <h4><i class="fa-solid fa-moon"></i> المظهر</h4>
+            <div class="theme-toggle-row">
+              <span>الوضع الداكن</span>
+              <label class="toggle-switch">
+                <input type="checkbox" id="themeToggle" checked>
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Color Accent -->
+          <div class="settings-section glass-panel">
+            <h4><i class="fa-solid fa-palette"></i> لون التطبيق</h4>
+            <div class="color-options" id="colorOptions">
+              <div class="color-opt selected" data-color="purple" style="background:#7C3AED;"></div>
+              <div class="color-opt" data-color="blue" style="background:#3B82F6;"></div>
+              <div class="color-opt" data-color="green" style="background:#10B981;"></div>
+              <div class="color-opt" data-color="red" style="background:#EF4444;"></div>
+              <div class="color-opt" data-color="orange" style="background:#F59E0B;"></div>
+              <div class="color-opt" data-color="pink" style="background:#EC4899;"></div>
+            </div>
+          </div>
+
+          <!-- Change Name -->
+          <div class="settings-section glass-panel">
+            <h4><i class="fa-solid fa-user-pen"></i> تغيير الاسم</h4>
+            <form id="changeNameForm" class="settings-form">
+              <div class="input-group"><input type="text" id="newNameInput" placeholder="الاسم الجديد" required></div>
+              <button type="submit" class="btn primary-btn btn-block btn-sm">حفظ الاسم</button>
+            </form>
+            <div class="settings-alert" id="nameAlert" style="display:none;"></div>
+          </div>
+
+          <!-- Change Password -->
+          <div class="settings-section glass-panel">
+            <h4><i class="fa-solid fa-key"></i> تغيير كلمة السر</h4>
+            <form id="changePasswordForm" class="settings-form">
+              <div class="input-group"><input type="password" id="currentPasswordInput" placeholder="كلمة السر الحالية" required></div>
+              <div class="input-group"><input type="password" id="newPasswordInput" placeholder="كلمة السر الجديدة" minlength="6" required></div>
+              <button type="submit" class="btn primary-btn btn-block btn-sm">تغيير كلمة السر</button>
+            </form>
+            <div class="settings-alert" id="passwordAlert" style="display:none;"></div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- STORY CREATE MODAL -->
+    <div class="modal-backdrop" id="storyCreateModal" style="display:none;">
+      <div class="modal-card glass-panel">
+        <div class="modal-header">
+          <h3><i class="fa-solid fa-camera-retro"></i> إنشاء قصة جديدة</h3>
+          <button class="close-modal-btn" id="closeStoryCreateBtn"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="modal-body">
+          <div class="story-image-picker" id="storyImagePicker">
+            <i class="fa-solid fa-image"></i>
+            <p>اضغط لاختيار صورة</p>
+            <input type="file" id="storyImageInput" accept="image/*" style="display:none;">
+          </div>
+          <div class="story-image-preview" id="storyImagePreview" style="display:none;">
+            <img id="storyPreviewImg" src="" alt="معاينة">
+          </div>
+          <div class="input-group">
+            <input type="text" id="storyTextInput" placeholder="أضف نصاً لقصتك (اختياري)">
+          </div>
+          <button class="btn primary-btn btn-block" id="publishStoryBtn">
+            <i class="fa-solid fa-paper-plane"></i> نشر القصة
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STORY VIEWER -->
+    <div class="story-viewer-overlay" id="storyViewer" style="display:none;">
+      <div class="story-viewer-header">
+        <div class="story-viewer-user">
+          <img id="storyViewerAvatar" src="" alt="">
+          <div>
+            <h4 id="storyViewerName"></h4>
+            <span id="storyViewerTime"></span>
+          </div>
+        </div>
+        <div class="story-viewer-actions">
+          <button class="icon-btn story-del-btn" id="deleteStoryBtn" style="display:none;" title="حذف القصة">
+            <i class="fa-solid fa-trash"></i>
+          </button>
+          <button class="icon-btn story-close-btn" id="closeStoryViewerBtn" title="إغلاق">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+      </div>
+      <div class="story-viewer-progress"><div class="story-progress-bar" id="storyProgressBar"></div></div>
+      <div class="story-viewer-content">
+        <img id="storyViewerImage" src="" alt="القصة">
+        <div class="story-viewer-text" id="storyViewerText"></div>
+      </div>
+    </div>
+
+    <!-- LIGHTBOX IMAGE MODAL -->
+    <div class="lightbox-modal" id="lightboxModal" style="display: none;">
+      <button class="lightbox-close-btn" id="closeLightboxBtn"><i class="fa-solid fa-xmark"></i></button>
+      <img id="lightboxImage" src="" alt="الصورة المكبرة">
+    </div>
+
+  </div>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js').catch(err => console.warn('SW registration:', err));
+    }
+  </script>
+  <script type="module" src="js/firebase-config.js"></script>
+  <script type="module" src="js/auth.js"></script>
+  <script type="module" src="js/presence.js"></script>
+  <script type="module" src="js/chat.js"></script>
+  <script type="module" src="js/settings.js"></script>
+  <script type="module" src="js/stories.js"></script>
+  <script type="module" src="js/app.js"></script>
+
+</body>
+</html>
