@@ -2,8 +2,8 @@
   "relation": ["delegate_permission/common.handle_all_urls"],
   "target": {
     "namespace": "android_app",
-    "package_name": "com.iqchat.app",
+    "package_name": "io.github.ghosti3604_cmd.twa",
     "sha256_cert_fingerprints":
-    ["0A:D3:42:D9:96:E5:C9:4B:68:1C:3F:80:9F:07:2D:A1:68:C3:DF:42:00:3D:9C:BD:04:F2:57:14:3F:A2:F3:42"]
+    ["4F:1C:DB:2B:64:67:D6:38:7E:92:D9:8C:AC:72:7D:0F:7F:4B:B0:9F:52:FC:A2:47:7A:52:E2:82:85:A1:18:CD"]
   }
 }]
