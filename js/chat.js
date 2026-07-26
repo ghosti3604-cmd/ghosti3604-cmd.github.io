@@ -8,7 +8,9 @@ import {
   addDoc, 
   query, 
   orderBy, 
-  onSnapshot 
+  onSnapshot,
+  doc,
+  updateDoc
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 let currentActivePeer = null;
@@ -80,7 +82,7 @@ export async function sendTextMessage(currentUserId, targetUserId, text) {
 /**
  * Send Image Attachment Message to Firestore
  */
-export async function sendImageMessage(currentUserId, targetUserId, imageBase64OrUrl) {
+export async function sendImageMessage(currentUserId, targetUserId, imageBase64OrUrl, isViewOnce = false) {
   if (!imageBase64OrUrl || !isFirebaseReady()) return;
 
   const roomId = getChatRoomId(currentUserId, targetUserId);
@@ -90,6 +92,8 @@ export async function sendImageMessage(currentUserId, targetUserId, imageBase64O
     text: '',
     imageUrl: imageBase64OrUrl,
     type: 'image',
+    isViewOnce: isViewOnce,
+    viewed: false,
     timestamp: Date.now()
   };
 
@@ -98,6 +102,20 @@ export async function sendImageMessage(currentUserId, targetUserId, imageBase64O
     await addDoc(msgsCol, msgData);
   } catch (e) {
     console.error('Error sending image message to Firestore:', e);
+  }
+}
+
+/**
+ * Mark View Once message as viewed
+ */
+export async function markMessageAsViewed(currentUserId, targetUserId, msgId) {
+  if (!isFirebaseReady()) return;
+  const roomId = getChatRoomId(currentUserId, targetUserId);
+  try {
+    const msgRef = doc(firebaseServices.db, 'chats', roomId, 'messages', msgId);
+    await updateDoc(msgRef, { viewed: true });
+  } catch (e) {
+    console.error('Error updating view once message:', e);
   }
 }
 

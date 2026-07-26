@@ -215,6 +215,10 @@
         <div class="image-preview-overlay" id="imagePreviewOverlay" style="display: none;">
           <div class="preview-card">
             <img id="previewImageElement" src="" alt="معاينة الصورة">
+            <label class="view-once-checkbox-container">
+              <input type="checkbox" id="isViewOnceCheckbox">
+              <span>إرسال كصورة مؤقتة (للمشاهدة مرة واحدة) ⏱️</span>
+            </label>
             <div class="preview-actions">
               <button type="button" class="btn danger-btn" id="cancelImagePreviewBtn">
                 <i class="fa-solid fa-trash"></i> إلغاء
@@ -362,7 +366,7 @@
     </div>
 
     <!-- LIGHTBOX IMAGE MODAL -->
-    <div class="lightbox-modal" id="lightboxModal" style="display: none;">
+    <div class="lightbox-modal" id="lightboxModal" style="display: none; opacity: 0;">
       <button class="lightbox-close-btn" id="closeLightboxBtn"><i class="fa-solid fa-xmark"></i></button>
       <img id="lightboxImage" src="" alt="الصورة المكبرة">
     </div>

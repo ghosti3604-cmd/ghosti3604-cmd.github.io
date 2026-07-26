@@ -6,7 +6,8 @@ import { listenToAuthState, registerUser, loginUser, logoutUser } from './auth.j
 import { startPresenceSystem, stopPresenceSystem, subscribeToUsersPresence, formatUserPresenceText } from './presence.js';
 import { 
   setActiveChatPeer, getActiveChatPeer, subscribeToMessages, 
-  sendTextMessage, sendImageMessage, processImageFile, formatMessageTime 
+  sendTextMessage, sendImageMessage, processImageFile, formatMessageTime,
+  markMessageAsViewed
 } from './chat.js';
 import { isFirebaseReady } from './firebase-config.js';
 import { 
@@ -60,6 +61,7 @@ const imagePreviewOverlay = document.getElementById('imagePreviewOverlay');
 const previewImageElement = document.getElementById('previewImageElement');
 const cancelImagePreviewBtn = document.getElementById('cancelImagePreviewBtn');
 const sendImagePreviewBtn = document.getElementById('sendImagePreviewBtn');
+const isViewOnceCheckbox = document.getElementById('isViewOnceCheckbox');
 let pendingImageBase64 = null;
 
 const lightboxModal = document.getElementById('lightboxModal');
@@ -119,6 +121,19 @@ document.addEventListener('DOMContentLoaded', () => {
   setupEventListeners();
   checkAppSetup();
 });
+
+// Dynamic viewport fix for mobile keyboards
+if (window.visualViewport) {
+  const setVpHeight = () => {
+    document.documentElement.style.setProperty('--vh', `${window.visualViewport.height}px`);
+    // Optional scroll into view if keyboard overlaps
+    if (chatScreen.style.display === 'flex' && messagesContainer) {
+      setTimeout(() => messagesContainer.scrollTop = messagesContainer.scrollHeight, 100);
+    }
+  };
+  window.visualViewport.addEventListener('resize', setVpHeight);
+  setVpHeight();
+}
 
 function checkAppSetup() {
   if (!isFirebaseReady()) {
@@ -305,8 +320,12 @@ function setupEventListeners() {
   sendImagePreviewBtn.addEventListener('click', async () => {
     const peer = getActiveChatPeer();
     if (peer && pendingImageBase64) {
-      await sendImageMessage(me.id, peer.id, pendingImageBase64);
-      pendingImageBase64 = null; imagePreviewOverlay.style.display = 'none'; imageFileInput.value = '';
+      const isViewOnce = isViewOnceCheckbox ? isViewOnceCheckbox.checked : false;
+      await sendImageMessage(me.id, peer.id, pendingImageBase64, isViewOnce);
+      pendingImageBase64 = null; 
+      imagePreviewOverlay.style.display = 'none'; 
+      imageFileInput.value = '';
+      if (isViewOnceCheckbox) isViewOnceCheckbox.checked = false;
     }
   });
 
@@ -321,9 +340,27 @@ function setupEventListeners() {
   });
 
   // Lightbox
-  closeLightboxBtn.addEventListener('click', () => lightboxModal.style.display = 'none');
+  const closeLightbox = () => {
+    lightboxModal.style.opacity = '0';
+    setTimeout(() => {
+      lightboxModal.style.display = 'none';
+      lightboxImage.classList.remove('zoomed');
+    }, 200);
+  };
+  closeLightboxBtn.addEventListener('click', closeLightbox);
   lightboxModal.addEventListener('click', (e) => {
-    if (e.target === lightboxModal) lightboxModal.style.display = 'none';
+    if (e.target === lightboxModal) closeLightbox();
+  });
+
+  let lastTap = 0;
+  lightboxImage.addEventListener('click', (e) => {
+    const currentTime = new Date().getTime();
+    const tapLength = currentTime - lastTap;
+    if (tapLength < 400 && tapLength > 0) {
+      lightboxImage.classList.toggle('zoomed');
+      e.preventDefault();
+    }
+    lastTap = currentTime;
   });
 
   // === SETTINGS ===
@@ -630,7 +667,15 @@ function renderMessagesFeed(messages) {
     const mine = msg.senderId === me.id;
     const cls = mine ? 'sent' : 'received';
     let content = '';
-    if (msg.type === 'image' || msg.imageUrl) {
+    if (msg.isViewOnce) {
+      if (msg.viewed) {
+        content = `<button type="button" class="view-once-btn viewed"><i class="fa-solid fa-eye-slash"></i> صورة مؤقتة (تمت المشاهدة)</button>`;
+      } else if (mine) {
+        content = `<button type="button" class="view-once-btn viewed"><i class="fa-solid fa-camera"></i> صورة مؤقتة (تم إرسالها)</button>`;
+      } else {
+        content = `<button type="button" class="view-once-btn" onclick="window.openViewOnceImage('${msg.imageUrl}', '${msg.id}', '${msg.senderId}')"><i class="fa-solid fa-camera"></i> صورة مؤقتة (انقر للمشاهدة)</button>`;
+      }
+    } else if (msg.type === 'image' || msg.imageUrl) {
       content = `<div class="message-image-attachment" onclick="window.openLightbox('${msg.imageUrl}')"><img src="${msg.imageUrl}" alt="صورة" loading="lazy"></div>`;
     }
     if (msg.text) content += `<div class="message-text">${escapeHtml(msg.text)}</div>`;
@@ -646,6 +691,15 @@ function renderMessagesFeed(messages) {
 window.openLightbox = function(url) {
   lightboxImage.src = url;
   lightboxModal.style.display = 'flex';
+  setTimeout(() => lightboxModal.style.opacity = '1', 10);
+};
+
+window.openViewOnceImage = function(url, msgId, senderId) {
+  window.openLightbox(url);
+  const peer = getActiveChatPeer();
+  if (peer && peer.id === senderId) {
+    markMessageAsViewed(me.id, senderId, msgId);
+  }
 };
 
 // === Helpers ===
